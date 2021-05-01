@@ -1,2 +1,2 @@
 # learn-ps-NgRx
-firsr commit
+afirsr commit
