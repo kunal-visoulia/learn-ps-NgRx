@@ -1,4 +1,4 @@
-import { createAction, createReducer, on } from "@ngrx/store";
+import { createAction, createFeatureSelector, createReducer, createSelector, on } from "@ngrx/store";
 import { Product } from "../product";
 import * as AppState from '../../state/app.state';
 
@@ -17,6 +17,23 @@ const initialState: ProductState = {
     currentProduct: null,
     products: []
 }
+
+const getProductFeatureState = createFeatureSelector<ProductState>('products');
+
+export const getshowProductCode = createSelector(
+    getProductFeatureState, //selector required to retrieve the desired bit of state
+    state => state.showProductCode // projector function which recives the slice of state data, manipulates it and returns it
+);
+
+export const getcurrentProduct = createSelector(
+    getProductFeatureState, 
+    state => state.currentProduct 
+);
+
+export const getProducts = createSelector(
+    getProductFeatureState, 
+    state => state.products 
+);
 
 //first argument specifies the initial store state for specific slice of store data
 export const productReducer = createReducer<ProductState>(

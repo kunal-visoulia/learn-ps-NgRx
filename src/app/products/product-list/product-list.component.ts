@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Subscription } from 'rxjs';
-import { State } from 'src/app/products/state/product.reducer';
+import { getshowProductCode, State } from 'src/app/products/state/product.reducer';
 
 import { Product } from '../product';
 import { ProductService } from '../product.service';
@@ -38,8 +38,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
     });
 
     // TODO: unsubscribe
-    this.store.select('products').subscribe( products => {
-        this.displayCode = products.showProductCode;
+    this.store.select(getshowProductCode).subscribe( showProductCode => {
+        this.displayCode = showProductCode;
     } );
   }
 
