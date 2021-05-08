@@ -39,11 +39,7 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
     // TODO: unsubscribe
     this.store.select('products').subscribe( products => {
-      //when app is first executed its slice of state is defined by the initial state we set in reducer
-      //but the products slice of state may not yet be defined, so, we wait until that state exists
-      if(products){
         this.displayCode = products.showProductCode;
-      }
     } );
   }
 
