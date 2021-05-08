@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Store } from '@ngrx/store';
 
 import { Subscription } from 'rxjs';
+import { State } from 'src/app/products/state/product.reducer';
 
 import { Product } from '../product';
 import { ProductService } from '../product.service';
@@ -23,7 +24,8 @@ export class ProductListComponent implements OnInit, OnDestroy {
   selectedProduct: Product | null;
   sub: Subscription;
 
-  constructor(private productService: ProductService, private store: Store<any>) { }
+  constructor(private productService: ProductService, private store: Store<State>) { }//we want the global state here so we can accer,say, user state
+  //also we want the extended state in product reducer not global as global state does not contain products slice of state
 
   ngOnInit(): void {
     this.sub = this.productService.selectedProductChanges$.subscribe(
