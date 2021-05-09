@@ -3,19 +3,19 @@ import { Product } from "../product";
 import * as AppState from '../../state/app.state';
 import * as ProductActions from './product.action';
 
-export interface State extends AppState.State{
+export interface State extends AppState.State {
     products: ProductState;
 }
-export interface ProductState{
+export interface ProductState {
     showProductCode: boolean;
-    currentProduct: Product;
+    currentProductId: number | null;
     products: Product[];
     error: string;
 }
 
 const initialState: ProductState = {
     showProductCode: true,
-    currentProduct: null,
+    currentProductId: null,
     products: [],
     error: ''
 }
@@ -27,63 +27,74 @@ export const getshowProductCode = createSelector(
     state => state.showProductCode // projector function which recives the slice of state data, manipulates it and returns it
 );
 
+export const getcurrentProductId = createSelector(
+    getProductFeatureState,
+    state => state.currentProductId
+);
+
 export const getcurrentProduct = createSelector(
-    getProductFeatureState, 
-    state => state.currentProduct 
+    getProductFeatureState,
+    getcurrentProductId,
+    (state, currentProductId) => {
+        if (currentProductId === 0){
+            return { id: 0,
+                productName: '',
+                productCode: 'New',
+                description: '',
+                starRating: 0
+            };
+        }
+        else
+        return currentProductId? state.products.find(p => p.id === currentProductId) : null;
+    }
 );
 
 export const getProducts = createSelector(
-    getProductFeatureState, 
-    state => state.products 
+    getProductFeatureState,
+    state => state.products
 );
 
 export const getError = createSelector(
-    getProductFeatureState, 
-    state => state.error 
+    getProductFeatureState,
+    state => state.error
 );
 
 //first argument specifies the initial store state for specific slice of store data
 export const productReducer = createReducer<ProductState>(
     initialState,
-    on( ProductActions.toggleProductCode, (state):ProductState => { 
-        console.log("original state "+JSON.stringify(state))
+    on(ProductActions.toggleProductCode, (state): ProductState => {
+        console.log("original state " + JSON.stringify(state))
         return {
             ...state,
             showProductCode: !state.showProductCode
         }
     }),
-    on(ProductActions.setCurrentProduct, (state,action): ProductState=>{
+    on(ProductActions.setCurrentProduct, (state, action): ProductState => {
         return {
             ...state,
-            currentProduct: action.product
+            currentProductId: action.currentProductId
         };
     }),
-    on(ProductActions.clearCurrentProduct, (state): ProductState=>{
+    on(ProductActions.clearCurrentProduct, (state): ProductState => {
         return {
             ...state,
-            currentProduct: null
+            currentProductId: null
         };
     }),
-    on(ProductActions.initializeCurrentProduct, (state): ProductState=>{ // this for when adding new products we iniitialize few fields 
+    on(ProductActions.initializeCurrentProduct, (state): ProductState => { // now selector provides the initialized code and componenet subcribes to that selector so the view get updated automaitcally see getcurrentProduct selector
         return {
             ...state,
-            currentProduct: {
-                id: 0,
-                productName:'',
-                productCode: 'New',
-                description: '',
-                starRating: 0
-            }
+            currentProductId:  0
         };
     }),
-    on(ProductActions.loadProductsSuccess, (state,action): ProductState=>{ //listens to dispatched loadProductsSuccessa action by the effects
+    on(ProductActions.loadProductsSuccess, (state, action): ProductState => { //listens to dispatched loadProductsSuccessa action by the effects
         return {
             ...state,
             products: action.products,
-            error:'' //clear old error
+            error: '' //clear old error
         };
     }),
-    on(ProductActions.loadProductsFailure, (state,action): ProductState=>{ 
+    on(ProductActions.loadProductsFailure, (state, action): ProductState => {
         return {
             ...state,
             products: [],

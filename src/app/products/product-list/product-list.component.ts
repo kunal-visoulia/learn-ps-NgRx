@@ -44,7 +44,7 @@ export class ProductListComponent implements OnInit {
   }
 
   productSelected(product: Product): void {
-    this.store.dispatch(ProductActions.setCurrentProduct({ product })); //setcurrent product action and retianthe current product in the store
+    this.store.dispatch(ProductActions.setCurrentProduct({ currentProductId : product.id })); //setcurrent product action and retian the current product in the store
   }
 
 }
