@@ -68,6 +68,12 @@ export const productReducer = createReducer<ProductState>(
                 starRating: 0
             }
         };
-    }) 
-    
+    }),
+    on(ProductActions.loadProductsSuccess, (state,action): ProductState=>{ //listens to dispatched loadProductsSuccessa action by the effects
+        return {
+            ...state,
+            products: action.products
+        };
+    }),
+
 );
