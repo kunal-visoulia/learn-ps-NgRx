@@ -10,12 +10,14 @@ export interface ProductState{
     showProductCode: boolean;
     currentProduct: Product;
     products: Product[];
+    error: string;
 }
 
 const initialState: ProductState = {
     showProductCode: true,
     currentProduct: null,
-    products: []
+    products: [],
+    error: ''
 }
 
 const getProductFeatureState = createFeatureSelector<ProductState>('products');
@@ -33,6 +35,11 @@ export const getcurrentProduct = createSelector(
 export const getProducts = createSelector(
     getProductFeatureState, 
     state => state.products 
+);
+
+export const getError = createSelector(
+    getProductFeatureState, 
+    state => state.error 
 );
 
 //first argument specifies the initial store state for specific slice of store data
@@ -72,8 +79,15 @@ export const productReducer = createReducer<ProductState>(
     on(ProductActions.loadProductsSuccess, (state,action): ProductState=>{ //listens to dispatched loadProductsSuccessa action by the effects
         return {
             ...state,
-            products: action.products
+            products: action.products,
+            error:'' //clear old error
         };
     }),
-
+    on(ProductActions.loadProductsFailure, (state,action): ProductState=>{ 
+        return {
+            ...state,
+            products: [],
+            error: action.error
+        };
+    })
 );
