@@ -1,18 +1,18 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 
-import { Subscription } from 'rxjs';
-import { getshowProductCode, State } from 'src/app/products/state/product.reducer';
+import { getcurrentProduct, getshowProductCode, State } from 'src/app/products/state/product.reducer';
 
 import { Product } from '../product';
 import { ProductService } from '../product.service';
+import * as ProductActions from '../state/product.action';
 
 @Component({
   selector: 'pm-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css']
 })
-export class ProductListComponent implements OnInit, OnDestroy {
+export class ProductListComponent implements OnInit {
   pageTitle = 'Products';
   errorMessage: string;
 
@@ -22,13 +22,13 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   // Used to highlight the selected product in the list
   selectedProduct: Product | null;
-  sub: Subscription;
 
   constructor(private productService: ProductService, private store: Store<State>) { }//we want the global state here so we can accer,say, user state
   //also we want the extended state in product reducer not global as global state does not contain products slice of state
 
   ngOnInit(): void {
-    this.sub = this.productService.selectedProductChanges$.subscribe(
+    // TODO: unsubscribe
+    this.store.select(getcurrentProduct).subscribe( //gets the currently selected product from store and highlight the product
       currentProduct => this.selectedProduct = currentProduct
     );
 
@@ -43,22 +43,16 @@ export class ProductListComponent implements OnInit, OnDestroy {
     } );
   }
 
-  ngOnDestroy(): void {
-    this.sub.unsubscribe();
-  }
-
   checkChanged(): void {
-    this.store.dispatch({
-      type: '[Product] Toggle Product Code'
-    });
+    this.store.dispatch(ProductActions.toggleProductCode());
   }
 
   newProduct(): void {
-    this.productService.changeSelectedProduct(this.productService.newProduct());
+    this.store.dispatch(ProductActions.initializeCurrentProduct());
   }
 
   productSelected(product: Product): void {
-    this.productService.changeSelectedProduct(product);
+    this.store.dispatch(ProductActions.setCurrentProduct( { product } )); //setcurrent product action and retianthe current product in the store
   }
 
 }
