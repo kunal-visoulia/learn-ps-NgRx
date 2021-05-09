@@ -60,7 +60,7 @@ export class ProductEditComponent implements OnInit {
     });
 
     // Watch for changes to the currently selected product
-    this.product$ = this.store.select(getcurrentProduct).pipe( tap(//gets the currently selected product from store and highlight the product
+    this.product$ = this.store.select(getcurrentProduct).pipe(tap(//gets the currently selected product from store and highlight the product
       currentProduct => this.displayProduct(currentProduct)
     ))
 
@@ -120,7 +120,7 @@ export class ProductEditComponent implements OnInit {
 
   saveProduct(originalProduct: Product): void {
     if (this.productForm.valid) {
-      if (this.productForm.dirty) {
+      if (this.productForm.dirty) { //checks if form has been changes. don't save if ther is nochannge
         // Copy over all of the original product properties
         // Then copy over the values from the form
         // This ensures values not on the form, such as the Id, are retained
@@ -128,14 +128,11 @@ export class ProductEditComponent implements OnInit {
 
         if (product.id === 0) { //new product
           this.productService.createProduct(product).subscribe({
-            next: p => this.store.dispatch(ProductActions.setCurrentProduct( {currentProductId : p.id} )),
+            next: p => this.store.dispatch(ProductActions.setCurrentProduct({ currentProductId: p.id })),
             error: err => this.errorMessage = err
           });
         } else { //changes to existing product
-          this.productService.updateProduct(product).subscribe({
-            next: p => this.store.dispatch(ProductActions.setCurrentProduct( {currentProductId : p.id} )),
-            error: err => this.errorMessage = err
-          });
+          this.store.dispatch(ProductActions.updateProduct({ product }));
         }
       }
     }

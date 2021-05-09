@@ -32,3 +32,18 @@ export const loadProductsFailure = createAction(
     '[Product] Load Fail',
     props<{error: string }>()
 )
+
+export const updateProduct = createAction(
+    '[Product] Update Product',
+    props< { product: Product} >()// to save the changed values of the product properties we will provide the updated object as the action's data
+)
+
+export const updateProductsSuccess = createAction(
+    '[Product] Update Product Success',
+    props<{product: Product }>() // same as above; the action's data is the updated product returned from update operation
+)
+
+export const updateProductsFailure = createAction(
+    '[Product] Update Product Fail',
+    props<{error: string }>()
+)

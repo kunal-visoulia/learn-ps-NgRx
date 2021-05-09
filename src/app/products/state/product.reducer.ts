@@ -100,5 +100,22 @@ export const productReducer = createReducer<ProductState>(
             products: [],
             error: action.error
         };
+    }),
+    on(ProductActions.updateProductsSuccess, (state, action): ProductState => { //listens to dispatched loadProductsSuccessa action by the effects
+        const updatedProducts = state.products.map( //map operator to ensure we are creating a new array and not mutable array
+            item => action.product.id === item.id? action.product : item
+        );
+        return {
+            ...state,
+            products: updatedProducts,
+            currentProductId: action.product.id,
+            error: '' //clear old error
+        };
+    }),
+    on(ProductActions.updateProductsFailure, (state, action): ProductState => {
+        return {
+            ...state,
+            error: action.error
+        };
     })
 );
